@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Category\CategoryController;
+use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +18,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::controller(AuthController::class)->group(function () {
+    Route::post('login', 'login');
+    Route::post('register', 'register');
+    Route::post('logout', 'logout');
 });
+
+// only for authenticate user 
+Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::apiResource('/product', ProductController::class);
+    Route::get('/user', [UserController::class, 'getCurrentUser']);
+    Route::get('/category', [CategoryController::class, 'index']);
+});
+
